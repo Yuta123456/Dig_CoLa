@@ -1,31 +1,27 @@
-from scipy.sparse.csgraph import shortest_path
-import sys
 import numpy as np
 
-def calc_weight(n, W, alpha=-2):
+def calc_l_w(node_cnt, weight):
     """
     L^wを求める。グラフ構造から導出される重み係数行列である。
 
     Parameters
     ----------
-    n : int
+    node_cnt : int
         ノード数
-    W : np.ndarray
+    weight : np.ndarray
         グラフの重み行列
-    alpha : int
-        重みのパラメタ
     Returns
     -------
     L_w : np.ndarray
         対象グラフの重み係数行列
     """
-    L_w = np.empty((n, n))
-    for i in range(n):
-        for j in range(n):
+    l_w = np.empty((node_cnt, node_cnt))
+    for i in range(node_cnt):
+        for j in range(node_cnt):
             if i != j:
                 # もし、i != jであれば、- W[i][j]
-                L_w[i][j] = - W[i][j]
+                l_w[i][j] = - weight[i][j]
             else:
                 # そうでなければ、d_{ik}^\alpha (k != i)の合計
-                L_w[i][j] = sum([W[i][j] if k != i else 0 for k in range(n)])
-    return L_w
+                l_w[i][j] = sum([weight[i][j] if k != i else 0 for k in range(node_cnt)])
+    return l_w
