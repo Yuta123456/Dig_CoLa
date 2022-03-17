@@ -1,7 +1,6 @@
-from scipy.sparse.csgraph import shortest_path
 import sys
 import numpy as np
-def calc_L_z(n, Z, dist,  W, alpha=-2):
+def calc_L_z(n, Z, dist,  W):
     """
     L^zを求める。X^tからX^{t+1}を導出するのに必要な行列である。
 
