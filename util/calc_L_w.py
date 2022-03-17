@@ -23,5 +23,5 @@ def calc_l_w(node_cnt, weight):
                 l_w[i][j] = - weight[i][j]
             else:
                 # そうでなければ、d_{ik}^\alpha (k != i)の合計
-                l_w[i][j] = sum([weight[i][j] if k != i else 0 for k in range(node_cnt)])
+                l_w[i][j] = sum([weight[i][k] if k != i else 0 for k in range(node_cnt)])
     return l_w
