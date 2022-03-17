@@ -15,9 +15,7 @@ def calc_weight(dist, alpha=-2):
     W : np.ndarray
         対象グラフの重み係数行列
     """
-    weight = np.empty(dist.shape)
-    for i in range(dist.shape[0]):
-        for j in range(dist.shape[1]):
-            # TODO: dist[i][j] = 0の時コケるかも
-            weight[i][j] = pow(dist[i][j], alpha)
+    # TODO: distの中に0が入っていた場合、
+    #       RuntimeWarning: divide by zero encountered in true_divideが起こる
+    weight = dist ** alpha
     return weight
