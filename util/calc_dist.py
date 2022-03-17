@@ -7,7 +7,7 @@ def calc_dist(node_cnt, edges):
 
     Parameters
     ----------
-    n : int
+    node_cnt : int
         ノード数
     edges : np.ndarray
         辺の接続情報
