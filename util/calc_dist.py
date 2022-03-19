@@ -1,10 +1,16 @@
 import numpy as np
 from scipy.sparse.csgraph import shortest_path
 
+class InfError(Exception):
+    """
+    距離がinfになった際、グラフが連結でないことがわかる。
+    """
+    def __str__(self):
+        return "グラフが連結じゃありません"
 def calc_dist(node_cnt, edges):
     """
     グラフの最短経路を計算。
-
+    NOTE : 有効グラフが与えられた際も、無向グラフとして計算している。
     Parameters
     ----------
     node_cnt : int
@@ -28,5 +34,8 @@ def calc_dist(node_cnt, edges):
             weight = 1
 
         adjusent_list[src][tar] = weight
+        adjusent_list[tar][src] = weight
     dist = shortest_path(np.array(adjusent_list))
+    if not np.all(dist != np.inf):
+        raise InfError()
     return dist
