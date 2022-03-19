@@ -50,7 +50,7 @@ def calc_node_point(node_cnt, exp):
             # 次に、二次の項について係数を入力
             q_o = calc_q_o(node_cnt, exp)
             qsubi, qsubj, qval = get_q_input_for_mosek(node_cnt, q_o)
-            print(q_o, get_q_input_for_mosek(node_cnt, q_o))
+
             task.putqobj(qsubi, qsubj, qval)
 
             task.putobjsense(mosek.objsense.minimize)
@@ -78,4 +78,4 @@ def calc_node_point(node_cnt, exp):
                 print("Unknown solution status")
             else:
                 print("Other solution status")
-    return xx
+    return np.array(xx)
