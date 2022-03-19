@@ -28,3 +28,19 @@ def calc_q_o(node_cnt, exp):
             if i == j:
                 q_o[i][j] *= 2
     return q_o
+
+
+def get_q_input_for_mosek(node_cnt, q_o):
+    """
+    mosekに入力できる形でのQ_oを取得
+    """
+    non_zero_index = []
+    q_val = []
+    for i in range(node_cnt):
+        for j in range(i, node_cnt):
+            if q_o[i][j] != 0:
+                non_zero_index.append((j, i))
+                q_val.append(q_o[j][i])
+    qsubi = [i[0] for i in non_zero_index]
+    qsubj = [i[1] for i in non_zero_index]
+    return (qsubi, qsubj, q_val)
