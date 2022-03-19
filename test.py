@@ -1,5 +1,6 @@
 import unittest
 import numpy as np
+import sympy
 from util.calc_weight import calc_weight
 from util.calc_dist import calc_dist
 from util.calc_L_w import calc_l_w
@@ -65,7 +66,7 @@ class Test(unittest.TestCase):
         calc_objのテスト用関数
         """
         node_cnt = 4
-        edges = [[0, 1], [1, 2], [2,3], [3,1]]
+        edges = [[0, 1], [1, 2], [2, 3], [3,1]]
         dist = calc_dist(node_cnt, edges)
         weight = calc_weight(dist)
         l_w = calc_l_w(node_cnt, weight)
