@@ -9,7 +9,7 @@ def calc_q_o(node_cnt, exp):
     ----------
     node_cnt : int
         ノードの個数
-    f_x : sympy.core.add.Add
+    exp : sympy.core.add.Add
         最小化したい数式
 
     Returns
