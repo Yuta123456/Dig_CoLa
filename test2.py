@@ -3,6 +3,7 @@ import numpy as np
 import sympy
 from util.calc_q_o import calc_q_o
 from util.calc_c import calc_c
+from util.calc_node_point import calc_node_point
 class Test(unittest.TestCase):
     """
     テスト用クラス
@@ -38,7 +39,7 @@ class Test(unittest.TestCase):
         res = calc_c(node_cnt, exp)
         ans = np.array([3, 8, 2])
         self.check_equal_numpy_array(res, ans)
-        
+
     def check_equal_numpy_array(self, res, ans):
         """
         numpy行列の一致比較
@@ -46,6 +47,7 @@ class Test(unittest.TestCase):
         self.assertEqual(res.shape, ans.shape)
         for i in zip(res.flatten(), ans.flatten()):
             self.assertEqual(i[0], i[1])
+
 
 if __name__ == "__main__":
     unittest.main()
