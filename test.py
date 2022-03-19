@@ -3,6 +3,8 @@ import numpy as np
 from util.calc_weight import calc_weight
 from util.calc_dist import calc_dist
 from util.calc_L_w import calc_l_w
+from util.calc_obj import calc_obj
+from util.calc_L_z import calc_l_z
 class Test(unittest.TestCase):
     """
     テスト用クラス
@@ -46,6 +48,31 @@ class Test(unittest.TestCase):
         weight = calc_weight(dist)
         ans = 1 / dist ** 2
         self.check_equal_numpy_array(weight, ans)
+
+    def test_calc_l_z(self):
+        """
+        calc_l_zのテスト用関数
+        """
+        node_cnt = 4
+        edges = [[0, 1], [1, 2], [2,3], [3,1]]
+        dist = calc_dist(node_cnt, edges)
+        weight = calc_weight(dist)
+        pre_x = np.array([[1,2], [2,2], [1, 4], [1,3]])
+        l_pre_x = calc_l_z(node_cnt, pre_x, dist, weight)
+        print(l_pre_x)
+    def test_calc_obj(self):
+        """
+        calc_objのテスト用関数
+        """
+        node_cnt = 4
+        edges = [[0, 1], [1, 2], [2,3], [3,1]]
+        dist = calc_dist(node_cnt, edges)
+        weight = calc_weight(dist)
+        l_w = calc_l_w(node_cnt, weight)
+        pre_x = np.array([[1,2], [2,2], [1, 4], [1,3]])
+        l_pre_x = calc_l_z(node_cnt, pre_x, dist, weight)
+        res = calc_obj(node_cnt, l_w, l_pre_x, pre_x[:, 0], 0)
+        print(res)
 
     def check_equal_numpy_array(self, res, ans):
         """
