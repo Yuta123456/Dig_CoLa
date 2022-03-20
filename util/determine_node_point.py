@@ -18,7 +18,7 @@ def determine_node_point(node_cnt, edges, initial_points, dimension, eps=0.0001)
     stress_x = calc_stress_x(node_cnt, weight, dist, initial_points)
     # 差分がepsより多い間続ける
     while delta > eps:
-        new_points = np.empty((node_cnt, dimension))
+        new_points = np.zeros((node_cnt, dimension))
         # 最後のノードは固定
         l_pre_x = calc_l_z(node_cnt-1, pre_points[:-1], dist, weight)
         for axis in range(dimension):
