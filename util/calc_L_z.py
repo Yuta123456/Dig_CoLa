@@ -27,11 +27,11 @@ def calc_l_z(node_cnt, z_array, dist, weight):
         for j in range(node_cnt):
             if i != j:
                 sub = (z_array[i] - z_array[j]) ** 2
-                sub_sum = sum(sub)
-                if sub_sum == 0:
+                sub_sum = sum(sub) ** 0.5
+                if sub_sum < 1e-4:
                     sub_inv = 0
                 else:
-                    sub_inv = 1 / sum(sub)
+                    sub_inv = 1 / sub_sum
                 l_z[i][j] = -weight[i][j] * dist[i][j] * sub_inv
                 # print(f"\n\nl_z[i][j]:{l_z[i][j]}, -weight[i][j]: {weight[i][j]}, dist[i][j]:{dist[i][j]}, sub_inv: {sub_inv}")
 

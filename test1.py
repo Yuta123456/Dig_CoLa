@@ -42,10 +42,10 @@ class Test(unittest.TestCase):
         """
         calc_weightのテスト用関数
         """
-        dist = np.array(([[0, 1, 2, 2],
+        dist = np.array([[0, 1, 2, 2],
                          [1, 0, 1, 1],
                          [2, 1, 0, 1],
-                         [2, 1, 1, 0]]))
+                         [2, 1, 1, 0]], dtype=np.float)
         weight = calc_weight(dist)
         ans = 1 / dist ** 2
         self.check_equal_numpy_array(weight, ans)
@@ -54,27 +54,31 @@ class Test(unittest.TestCase):
         """
         calc_l_zのテスト用関数
         """
-        node_cnt = 4
-        edges = [[0, 1], [1, 2], [2,3], [3,1]]
+        node_cnt = 3
+        edges = [[0, 1], [1, 2]]
         dist = calc_dist(node_cnt, edges)
         weight = calc_weight(dist)
-        pre_x = np.array([[1,2], [2,2], [1, 4], [1,3]])
-        l_pre_x = calc_l_z(node_cnt, pre_x, dist, weight)
-        # TODO: 計算結果があっているか判断。
+        pre_x = np.array([[1,2], [2,2], [1, 4]])
+        res = calc_l_z(node_cnt, pre_x, dist, weight)
+        # TODO: 計算結果があっているか判断
+        ans = np.array([[5/4, -1, -1/4],
+                        [-1, 1+1/np.sqrt(5), -1/np.sqrt(5)],
+                        [-1/4, -1/np.sqrt(5), 1/4+1/np.sqrt(5)]])
+        self.check_equal_numpy_array(res, ans)
 
 
     def test_calc_obj(self):
         """
         calc_objのテスト用関数
         """
-        node_cnt = 4
-        edges = [[0, 1], [1, 2], [2, 3], [3,1]]
+        node_cnt = 3
+        edges = [[0, 1], [1, 2]]
         dist = calc_dist(node_cnt, edges)
         weight = calc_weight(dist)
         l_w = calc_l_w(node_cnt, weight)
-        pre_x = np.array([[1,2], [2,2], [1, 4], [1,3]])
+        pre_x = np.array([[1,2], [2,2], [1, 4]])
         l_pre_x = calc_l_z(node_cnt, pre_x, dist, weight)
-        res = calc_obj(node_cnt, l_w, l_pre_x, pre_x[:, 0], 0)
+        res = calc_obj(node_cnt, l_w, l_pre_x, pre_x[:, 0])
         # TODO: 計算結果があっているか判断。
 
     def check_equal_numpy_array(self, res, ans):
