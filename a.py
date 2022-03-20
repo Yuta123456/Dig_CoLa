@@ -1,8 +1,7 @@
-import sys
-import mosek
+import sys, os, mosek
 
-# Since the value of infinity is ignored, we define it solely
-# for symbolic purposes
+# Since the actual value of Infinity is ignored, we define it solely
+# for symbolic purposes:
 inf = 0.0
 
 # Define a stream printer to grab output from MOSEK
@@ -12,45 +11,25 @@ def streamprinter(text):
 
 
 def main():
-    # Make mosek environment
+    # Open MOSEK and create an environment and task
+    # Make a MOSEK environment
     with mosek.Env() as env:
-        # Create a task object
-        with env.Task(0, 0) as task:
-            # Attach a log stream printer to the task
+        # Attach a printer to the environment
+        env.set_Stream(mosek.streamtype.log, streamprinter)
+        # Create a task
+        with env.Task() as task:
             task.set_Stream(mosek.streamtype.log, streamprinter)
-
-            # Bound keys for constraints
-            bkc = [mosek.boundkey.fx,
-                   mosek.boundkey.lo,
-                   mosek.boundkey.up]
-
-            # Bound values for constraints
-            blc = [30.0, 15.0, -inf]
-            buc = [30.0, +inf, 25.0]
-
-            # Bound keys for variables
-            bkx = [mosek.boundkey.lo,
-                   mosek.boundkey.ra,
-                   mosek.boundkey.lo,
-                   mosek.boundkey.lo]
-
-            # Bound values for variables
-            blx = [0.0, 0.0, 0.0, 0.0]
-            bux = [+inf, 10.0, +inf, +inf]
-
-            # Objective coefficients
-            c = [3.0, 1.0, 5.0, 1.0]
-
-            # Below is the sparse representation of the A
-            # matrix stored by column.
-            asub = [[0, 1],
-                    [0, 1, 2],
-                    [0, 1],
-                    [1, 2]]
-            aval = [[3.0, 2.0],
-                    [1.0, 1.0, 2.0],
-                    [2.0, 3.0],
-                    [1.0, 3.0]]
+            # Set up and input bounds and linear coefficients
+            bkc = [mosek.boundkey.lo]
+            blc = [1.0]
+            buc = [inf]
+            numvar = 3
+            bkx = [mosek.boundkey.lo] * numvar
+            blx = [0.0] * numvar
+            bux = [inf] * numvar
+            c = [0.0, -1.0, 0.0]
+            asub = [[0], [0], [0]]
+            aval = [[1.0], [1.0], [1.0]]
 
             numvar = len(bkx)
             numcon = len(bkc)
@@ -66,44 +45,48 @@ def main():
             for j in range(numvar):
                 # Set the linear term c_j in the objective.
                 task.putcj(j, c[j])
-
                 # Set the bounds on variable j
                 # blx[j] <= x_j <= bux[j]
                 task.putvarbound(j, bkx[j], blx[j], bux[j])
-
                 # Input column j of A
                 task.putacol(j,                  # Variable (column) index.
-                             asub[j],            # Row index of non-zeros in column j.
+                             # Row index of non-zeros in column j.
+                             asub[j],
                              aval[j])            # Non-zero Values of column j.
-
-            # Set the bounds on constraints.
-             # blc[i] <= constraint_i <= buc[i]
             for i in range(numcon):
                 task.putconbound(i, bkc[i], blc[i], buc[i])
 
-            # Input the objective sense (minimize/maximize)
-            task.putobjsense(mosek.objsense.maximize)
+            # Set up and input quadratic objective
+            qsubi = [0, 1, 2, 2]
+            qsubj = [0, 1, 0, 2]
+            qval = [2.0, 0.2, -1.0, 2.0]
 
-            # Solve the problem
+            task.putqobj(qsubi, qsubj, qval)
+
+            # Input the objective sense (minimize/maximize)
+            task.putobjsense(mosek.objsense.minimize)
+
+            # Optimize
             task.optimize()
             # Print a summary containing information
             # about the solution for debugging purposes
             task.solutionsummary(mosek.streamtype.msg)
 
-            # Get status information about the solution
-            solsta = task.getsolsta(mosek.soltype.bas)
+            prosta = task.getprosta(mosek.soltype.itr)
+            solsta = task.getsolsta(mosek.soltype.itr)
 
-            if (solsta == mosek.solsta.optimal):
-                xx = [0.] * numvar
-                task.getxx(mosek.soltype.bas, # Request the basic solution.
-                           xx)
-                print("Optimal solution: ")
-                for i in range(numvar):
-                    print("x[" + str(i) + "]=" + str(xx[i]))
-            elif (solsta == mosek.solsta.dual_infeas_cer or
-                  solsta == mosek.solsta.prim_infeas_cer):
-                print("Primal or dual infeasibility certificate found.\n")
-            elif solsta == mosek.solsta.unknown:
+            # Output a solution
+            xx = [0.] * numvar
+            task.getxx(mosek.soltype.itr,
+                       xx)
+
+            if solsta == mosek.solsta.optimal:
+                print("Optimal solution: %s" % xx)
+            elif solsta == mosek.solsta.dual_infeas_cer:
+                print("Primal or dual infeasibility.\n")
+            elif solsta == mosek.solsta.prim_infeas_cer:
+                print("Primal or dual infeasibility.\n")
+            elif mosek.solsta.unknown:
                 print("Unknown solution status")
             else:
                 print("Other solution status")
@@ -111,11 +94,13 @@ def main():
 # call the main function
 try:
     main()
-except mosek.Error as e:
+except mosek.MosekException as e:
     print("ERROR: %s" % str(e.errno))
     if e.msg is not None:
+        import traceback
+        traceback.print_exc()
         print("\t%s" % e.msg)
-        sys.exit(1)
+    sys.exit(1)
 except:
     import traceback
     traceback.print_exc()

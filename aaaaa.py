@@ -1,13 +1,13 @@
 import numpy as np
 import sympy
 
-x = np.array([sympy.Symbol('x1'), sympy.Symbol('x2'),sympy.Symbol('x3')])
-
-q = np.array([[2, 0, -1],
-              [0, 0.2, 0],
-              [-1, 0, 2]])
-c = np.array([0,-1,0]).T
-
-A = [1,1,1]
-ans = (1/2) * np.dot(np.dot(x.T, q), x) + np.dot(c.T, x)
-print(sympy.expand(ans))
+from util.calc_weight import calc_weight
+from util.calc_dist import calc_dist
+from util.calc_L_w import calc_l_w
+node_cnt = 4
+edge = [[0,1], [2,3], [0,3], [1,2]]
+dist = calc_dist(node_cnt, edge)
+weight = calc_weight(dist)
+x = np.array([[1, 2], [2, 5],[3, 2], [5, 3]])
+l_w = calc_l_w(node_cnt, weight)
+print(np.dot(np.dot(x.T, l_w), x))

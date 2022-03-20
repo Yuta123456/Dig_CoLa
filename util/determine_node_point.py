@@ -20,7 +20,7 @@ def determine_node_point(node_cnt, edges, initial_points, dimension, eps=0.0001)
     while delta > eps:
         new_points = np.empty((node_cnt, dimension))
         # 最後のノードは固定
-        l_pre_x = calc_l_z(node_cnt-1, initial_points[:-1], dist, weight)
+        l_pre_x = calc_l_z(node_cnt-1, pre_points[:-1], dist, weight)
         for axis in range(dimension):
             # if axis == 1:
                 # TODO: y軸に対しては制約を課す

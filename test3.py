@@ -16,5 +16,6 @@ class Test(unittest.TestCase):
         exp = x1**2 + 0.1*x2**2 + x3**2 - x1*x3 - x2
         optional_solution = calc_node_point(node_cnt, exp)
 
+
 if __name__ == "__main__":
     unittest.main()
