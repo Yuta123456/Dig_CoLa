@@ -6,7 +6,7 @@ from util.calc_stress_x import calc_stress_x
 from util.calc_obj import calc_obj
 from util.calc_L_z import calc_l_z
 from util.calc_node_point import calc_node_point
-def determine_node_point(node_cnt, edges, initial_points, dimension, eps=0.0001):
+def determine_node_point(node_cnt, edges, initial_points, dimension, eps=0.01):
     """
     ノードの描画位置を決める関数
     """
@@ -20,13 +20,13 @@ def determine_node_point(node_cnt, edges, initial_points, dimension, eps=0.0001)
     while delta > eps:
         new_points = np.zeros((node_cnt, dimension))
         # 最後のノードは固定
-        l_pre_x = calc_l_z(node_cnt-1, pre_points[:-1], dist, weight)
+        l_pre_x = calc_l_z(node_cnt, pre_points, dist, weight)
         for axis in range(dimension):
             # if axis == 1:
                 # TODO: y軸に対しては制約を課す
             # 最後のノードは固定
-            exp = calc_obj(node_cnt-1, l_w[:-1, :-1], l_pre_x, pre_points[:-1, axis])
-            # axisに対しての最適解が返ってくるため、1 * nのベクトル
+            exp = calc_obj(node_cnt-1, l_w[:-1, :-1], l_pre_x[:-1, :-1], pre_points[:-1, axis])
+            # axisに対しての最適解が返ってくるため、1 * n-1のベクトル
             point = calc_node_point(node_cnt-1, exp)
             new_points[:-1, axis] = point.T
         pre_points = new_points
