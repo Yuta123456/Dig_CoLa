@@ -36,8 +36,8 @@ def calc_node_point(node_cnt, exp):
             # 変数の個数
             numvar = node_cnt
             # 変数に関しての制約
-            bkx = [mosek.boundkey.lo] * numvar
-            blx = [0.0] * node_cnt
+            bkx = [mosek.boundkey.fr] * numvar
+            blx = [-1*inf] * node_cnt
             bux = [inf] * node_cnt
 
             task.appendvars(numvar)
